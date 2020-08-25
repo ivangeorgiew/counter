@@ -1,3 +1,6 @@
+# Project for testing technologies and code.
+[Running version](https://ivangeorgiew.github.io/counter/)
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
