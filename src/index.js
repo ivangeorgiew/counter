@@ -1,12 +1,41 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import ReactDOM from 'react-dom'
+import pureErrorHandling from 'pure-error-handling'
 import './index.css'
-import { createFunc, createMethods, initUncaughtErrorHandling } from './errorHandling'
+
+const errorHandlers = pureErrorHandling({
+    isProduction: process.env.NODE_ENV === 'production',
+    notifyUser: alert
+})
+const { createFunc, createMethods, initUncaughtErrorHandling } = errorHandlers
+const createReactFunc = function (funcDesc, onTry, onCatch) {
+    return React.memo(createFunc(funcDesc, onTry, onCatch))
+}
 
 initUncaughtErrorHandling()
 
-const Counter = React.memo(createFunc(
+const Counter = createReactFunc(
     'Showing the counter',
+    (props = {}) => {
+        const { count = 0, delay = 1000 } = props
+        const { handleOnChange, handleOnClick } = props
+
+        return (
+            <>
+                <h1>Counter: {count}</h1>
+                <label>
+                    Delay:
+                    <input type="text" value={delay} onChange={handleOnChange} />
+                </label>
+                <button onClick={handleOnClick}>Reset</button>
+            </>
+        )
+    },
+    () => <h1>Error with the counter</h1>
+)
+
+const CounterContainer = createReactFunc(
+    'Using the counter',
     () => {
         const [count, setCount] = useState(0)
         const [delay, setDelay] = useState(1000)
@@ -36,18 +65,13 @@ const Counter = React.memo(createFunc(
         useEffect(() => createEffects(), [createEffects])
 
         return (
-            <>
-                <h1>Counter: {count}</h1>
-                <label>
-                    Delay:
-                    <input type="text" value={delay} onChange={handleOnChange} />
-                </label>
-                <button onClick={handleOnClick}>Reset</button>
-            </>
+            <Counter
+                {...{ count, delay, handleOnChange, handleOnClick }}
+            />
         )
     },
-    () => <h1>Error with the counter</h1>
-))
+    () => <Counter />
+)
 
 const rootElement = document.getElementById('root')
-ReactDOM.render(<Counter />, rootElement)
+ReactDOM.render(<CounterContainer />, rootElement)
