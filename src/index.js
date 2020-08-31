@@ -35,11 +35,11 @@ const CounterContainer = createData(
         const [count, setCount] = useState(0)
         const [delay, setDelay] = useState(1000)
 
-        const { handleOnChange, handleOnClick } = useMemo(
-            () => createData('Event handlers', {
-                handleOnChange: (e) => { setDelay(e.target.value) },
-                handleOnClick: () => { setCount(0) }
-            }),
+        const [handleOnChange, handleOnClick] = useMemo(
+            () => createData('Event handlers', [
+                (e) => { setDelay(e.target.value) },
+                () => { setCount(0) }
+            ]),
             [setCount, setDelay]
         )
 
