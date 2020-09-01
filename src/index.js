@@ -1,7 +1,7 @@
 import './index.css'
 import getErrorHandling from 'tied-pants'
-import _React from 'react'
-import _ReactDOM from 'react-dom'
+import React from 'react'
+import ReactDOM from 'react-dom'
 
 const { createData, initUncaughtErrorHandling } = getErrorHandling({
     onError: ({ userMsg, prodMsg }) => {
@@ -9,7 +9,7 @@ const { createData, initUncaughtErrorHandling } = getErrorHandling({
         alert(userMsg)
 
         if (process?.env?.NODE_ENV === 'production') {
-            //TODO change with actual logging in prod service
+            //TODO change with actual logging in production
             console.info(prodMsg)
         }
     }
@@ -17,12 +17,10 @@ const { createData, initUncaughtErrorHandling } = getErrorHandling({
 
 initUncaughtErrorHandling()
 
-//doesn't slow-down performance (even speeds up at lower component renders)
-export const React = createData('React', _React)
-export const { useState, useEffect, useMemo } = React
-export const ReactDOM = createData('ReactDOM', _ReactDOM)
-export const { render } = ReactDOM
-
+// doesn't affect performance
+// dont create React as a whole, or it will double the parsing of jsx
+const { useState, useEffect, useMemo } = createData('React', React)
+const { render } = createData('ReactDOM', ReactDOM)
 
 const Counter = createData(
     'Showing the counter',
