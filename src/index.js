@@ -1,13 +1,28 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
-import pureErrorHandling from 'pure-error-handling'
 import './index.css'
+import getErrorHandling from 'tied-pants'
+import _React from 'react'
+import _ReactDOM from 'react-dom'
 
-const { createData, initUncaughtErrorHandling } = pureErrorHandling({ notifyUser: alert })
-const { useState, useEffect, useMemo } = createData(React)
-const render = createData('React render method', ReactDOM.render)
+const { createData, initUncaughtErrorHandling } = getErrorHandling({
+    onError: ({ userMsg, prodMsg }) => {
+        //TODO change with actual notifications
+        alert(userMsg)
+
+        if (process?.env?.NODE_ENV === 'production') {
+            //TODO change with actual logging in prod service
+            console.info(prodMsg)
+        }
+    }
+})
 
 initUncaughtErrorHandling()
+
+//doesn't slow-down performance (even speeds up at lower component renders)
+export const React = createData('React', _React)
+export const { useState, useEffect, useMemo } = React
+export const ReactDOM = createData('ReactDOM', _ReactDOM)
+export const { render } = ReactDOM
+
 
 const Counter = createData(
     'Showing the counter',
@@ -56,9 +71,7 @@ const CounterContainer = createData(
         }, [count, delay])
 
         return (
-            <Counter
-                {...{ count, delay, handleOnChange, handleOnClick }}
-            />
+            <Counter {...{ count, delay, handleOnChange, handleOnClick }} />
         )
     },
     () => <Counter />
