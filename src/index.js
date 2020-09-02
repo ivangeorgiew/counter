@@ -4,25 +4,25 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 
 const { createData } = getErrorHandling({
-    onError: ({ userMsg, prodMsg }) => {
+    onError: ({ description, productionMsg }) => {
         //TODO change with actual notifications
-        alert(userMsg)
+        alert(`Issue with: ${description}`)
 
         if (process?.env?.NODE_ENV === 'production') {
             //TODO change with actual logging in production
-            console.info(prodMsg)
+            console.info(productionMsg)
         }
     }
 })
 
 // doesn't affect performance
 // dont create React as a whole, or it will double the parsing of jsx
-const { useState, useEffect, useMemo } = createData('React', React)
+const { memo, useState, useEffect, useMemo } = createData('React', React)
 const { render } = createData('ReactDOM', ReactDOM)
 
 const Counter = createData(
-    'Showing the counter',
-    (props = {}) => {
+    'showing counter',
+    memo((props = {}) => {
         const { count = 0, delay = 1000 } = props
         const { handleOnChange, handleOnClick } = props
 
@@ -36,12 +36,12 @@ const Counter = createData(
                 <button onClick={handleOnClick}>Reset</button>
             </>
         )
-    },
+    }),
     () => <h1>Error with the counter</h1>
 )
 
 const CounterContainer = createData(
-    'Using the counter',
+    'using counter',
     () => {
         const [count, setCount] = useState(0)
         const [delay, setDelay] = useState(1000)
