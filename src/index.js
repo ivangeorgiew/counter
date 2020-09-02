@@ -3,7 +3,7 @@ import getErrorHandling from 'tied-pants'
 import React from 'react'
 import ReactDOM from 'react-dom'
 
-const { createData, initUncaughtErrorHandling } = getErrorHandling({
+const { createData } = getErrorHandling({
     onError: ({ userMsg, prodMsg }) => {
         //TODO change with actual notifications
         alert(userMsg)
@@ -14,8 +14,6 @@ const { createData, initUncaughtErrorHandling } = getErrorHandling({
         }
     }
 })
-
-initUncaughtErrorHandling()
 
 // doesn't affect performance
 // dont create React as a whole, or it will double the parsing of jsx

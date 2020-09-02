@@ -76,7 +76,6 @@ checkBrowsers(paths.appPath, isInteractive)
       return;
     }
 
-    const config = configFactory('development');
     const protocol = process.env.HTTPS === 'true' ? 'https' : 'http';
     const appName = require(paths.appPackageJson).name;
     const useTypeScript = fs.existsSync(paths.appTsConfig);
@@ -87,6 +86,8 @@ checkBrowsers(paths.appPath, isInteractive)
       port,
       paths.publicUrlOrPath.slice(0, -1)
     );
+    const config = configFactory('development', urls.localUrlForBrowser);
+
     const devSocket = {
       warnings: warnings =>
         devServer.sockWrite(devServer.sockets, 'warnings', warnings),
