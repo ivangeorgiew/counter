@@ -4,14 +4,17 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 
 const { createData } = getErrorHandling({
-    onError: ({ description, productionMsg }) => {
-        //TODO change with actual notifications
-        alert(`Issue with: ${description}`)
-
-        if (process?.env?.NODE_ENV === 'production') {
-            //TODO change with actual logging in production
-            console.info(productionMsg)
+    notify: ({ isDevelopment, isUncaught, userMsg, productionMsg }) => {
+        if (isUncaught) {
+            // TODO change with ERROR notification
+            alert('ERROR - ' + userMsg)
+        } else if (isDevelopment) {
+            // TODO change with WARNING notification
+            alert('WARNING - ' + userMsg)
         }
+
+        // TODO add production logger that uses productionMsg
+        // callProdLoggerService({ JSON: productionMsg })
     }
 })
 
