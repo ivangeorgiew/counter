@@ -4,13 +4,15 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 
 const { createData } = getErrorHandling({
-    notify: ({ isDevelopment, isUncaught, userMsg, productionMsg }) => {
+    notify: ({ isUncaught, isFriendly, userMsg, productionMsg }) => {
         if (isUncaught) {
             // TODO change with ERROR notification
-            alert('ERROR - ' + userMsg)
-        } else if (isDevelopment) {
+            alert(`ERROR - ${userMsg}`)
+        }
+        // TODO if app is for developers, remove isFriendly check
+        else if (isFriendly) {
             // TODO change with WARNING notification
-            alert('WARNING - ' + userMsg)
+            alert(`WARNING - ${userMsg}`)
         }
 
         // TODO add production logger that uses productionMsg
