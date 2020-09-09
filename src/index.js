@@ -6,29 +6,20 @@ import ReactDOM from 'react-dom'
 const { createData } = getErrorHandling({
     notify: ({ isUncaught, isFriendly, userMsg, productionMsg }) => {
         if (isUncaught) {
-            // TODO change with ERROR notification
             alert(`ERROR - ${userMsg}`)
-        }
-        // TODO if app is for developers, remove isFriendly check
-        else if (isFriendly) {
-            // TODO change with WARNING notification
+        } else if (isFriendly) {
             alert(`WARNING - ${userMsg}`)
         }
-
-        // TODO add production logger that uses productionMsg
-        // callProdLoggerService({ JSON: productionMsg })
     }
 })
 
-// doesn't affect performance
-// dont create React as a whole, or it will double the parsing of jsx
 const { memo, useState, useEffect, useMemo } = createData('React', React)
 const { render } = createData('ReactDOM', ReactDOM)
 
 const Counter = createData(
     'showing counter',
     memo((props = {}) => {
-        const { count = 0, delay = 1000 } = props
+        const { count = 0, delay } = props
         const { handleOnChange, handleOnClick } = props
 
         return (
@@ -71,9 +62,7 @@ const CounterContainer = createData(
             return () => clearTimeout(id)
         }, [count, delay])
 
-        return (
-            <Counter {...{ count, delay, handleOnChange, handleOnClick }} />
-        )
+        return <Counter {...{ count, delay, handleOnChange, handleOnClick }} />
     },
     () => <Counter />
 )
