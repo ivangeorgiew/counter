@@ -1,10 +1,26 @@
-import React from 'react'
-import { render } from 'react-dom'
-import './index.css'
-import { catchUnhandled } from './errorHandling'
-import { CounterContainer } from './CounterContainer'
+import "./index.css"
+import React from "react"
+import { render } from "react-dom"
+import { isDev, FriendlyError, globalHandleErrors, changeOptions } from "tied-up"
+import { Counter } from "./Counter"
 
-catchUnhandled()
+globalHandleErrors(true)
 
-const rootElement = document.getElementById('root')
-render(<CounterContainer />, rootElement)
+changeOptions({
+    notify: props => {
+        const { description, error } = props
+
+        if (isDev || (!isDev && error instanceof FriendlyError)) {
+            alert(`ERROR: ${description}`)
+        }
+    },
+})
+
+render(
+    <React.StrictMode>
+        <Counter defaultDelay={10} />
+        <Counter defaultDelay={100} />
+        <Counter defaultDelay={1000} />
+    </React.StrictMode>,
+    document.getElementById("root")
+)
