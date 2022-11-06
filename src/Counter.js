@@ -1,73 +1,62 @@
-import React, { useState } from "react"
-import { idxDef, createDef, boolDef, funcDef, tieImpure, tieInterval } from "tied-up"
+import React, { useState, useEffect } from "react"
+import { idxDef, createDef, boolDef, funcDef, tie } from "tied-up"
 import { synEventDef, useTiedEffect } from "./utils"
 
-const changeDirection = tieImpure(
-    "Counter -> changing direction",
-    [
-        createDef({
-            strictProps: { newShouldAdd: boolDef, setShouldAdd: funcDef },
-        }),
+const changeDirection = tie({
+    descr: "Counter -> changing direction",
+    spec: [
+        createDef({ strictProps: { newShouldAdd: boolDef, setShouldAdd: funcDef } }),
     ],
-    (props, _) => {
+    onTry: (props, _) => {
         const { newShouldAdd, setShouldAdd } = props
 
         setShouldAdd(newShouldAdd)
     },
-    () => {}
-)
+    onCatch: () => {},
+})
 
-const createInterval = tieImpure(
-    "Counter -> creating interval",
-    [
+const createInterval = tie({
+    descr: "Counter -> creating interval",
+    spec: [
         createDef({
             strictProps: { delay: idxDef, shouldAdd: boolDef, setCount: funcDef },
         }),
     ],
-    (props, _) => {
+    onTry: (props, _) => {
         const { delay, shouldAdd, setCount } = props
 
-        const id = tieInterval(
-            "increasing count",
-            [],
-            () => {
-                setCount(count => (shouldAdd ? count + 1 : count - 1))
-            },
-            () => {},
+        const id = setInterval(
+            tie({
+                descr: "increasing count",
+                onTry: () => setCount(count => (shouldAdd ? count + 1 : count - 1)),
+                onCatch: () => {},
+            }),
             delay
         )
 
         return () => clearInterval(id)
     },
-    () => () => {}
-)
+    onCatch: () => {},
+})
 
-const handleDelayChange = tieImpure(
-    "Counter -> delay change",
-    [funcDef, synEventDef],
-    (setDelay, e) => {
-        setDelay(Number(e.target.value))
-    },
-    () => {}
-)
+const handleDelayChange = tie({
+    descr: "Counter -> delay change",
+    spec: [funcDef, synEventDef],
+    onTry: (setDelay, e) => setDelay(Number(e.target.value)),
+    onCatch: () => {},
+})
 
-const handleResetClick = tieImpure(
-    "Counter -> reset click",
-    [funcDef],
-    (setCount, _) => {
-        setCount(0)
-    },
-    () => {}
-)
+const handleResetClick = tie({
+    descr: "Counter -> reset click",
+    spec: [funcDef],
+    onTry: (setCount, _) => setCount(0),
+    onCatch: () => {},
+})
 
-export const Counter = tieImpure(
-    "Counter",
-    [
-        createDef({
-            strictProps: { defaultDelay: idxDef },
-        }),
-    ],
-    props => {
+export const Counter = tie({
+    descr: "Counter",
+    spec: [createDef({ strictProps: { defaultDelay: idxDef } })],
+    onTry: props => {
         const { defaultDelay } = props
 
         const [count, setCount] = useState(0)
@@ -80,7 +69,7 @@ export const Counter = tieImpure(
 
         return (
             <>
-                <h1>Counter: {count}</h1>
+                <h1>Counter: {count < 10 ? "0" + count : count}</h1>
                 <label>
                     Delay:
                     <input
@@ -93,14 +82,14 @@ export const Counter = tieImpure(
             </>
         )
     },
-    () => (
+    onCatch: () => (
         <>
-            <h1>Counter: NaN</h1>
+            <h1>Counter: 0</h1>
             <label>
                 Delay:
-                <input type="text" value={"NaN"} />
+                <input type="text" value={"0"} />
             </label>
             <button>Reset</button>
         </>
-    )
-)
+    ),
+})

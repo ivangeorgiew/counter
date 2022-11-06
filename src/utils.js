@@ -1,5 +1,5 @@
 import { useEffect } from "react"
-import { createDef, funcDef, tieImpure } from "tied-up"
+import { createDef, funcDef, tie } from "tied-up"
 
 export const synEventDef = createDef({
     getMsg: arg => {
@@ -13,13 +13,9 @@ export const synEventDef = createDef({
     },
 })
 
-export const useTiedEffect = tieImpure(
-    "using tied react effect",
-    [funcDef],
-    eff => {
-        useEffect(eff, [eff])
-    },
-    () => {
-        useEffect(() => {}, [])
-    }
-)
+export const useTiedEffect = tie({
+    descr: "using tied react effect",
+    spec: [funcDef],
+    onTry: eff => useEffect(eff, [eff]),
+    onCatch: () => {},
+})

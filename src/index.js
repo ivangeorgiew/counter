@@ -1,17 +1,17 @@
 import "./index.css"
 import React from "react"
 import { render } from "react-dom"
-import { isDev, FriendlyError, globalHandleErrors, changeOptions } from "tied-up"
+import { isDev, FriendlyError, handleGlobalErrors, changeOptions } from "tied-up"
 import { Counter } from "./Counter"
 
-globalHandleErrors(true)
+handleGlobalErrors(true)
 
 changeOptions({
     notify: props => {
-        const { description, error } = props
+        const { descr, error } = props
 
         if (isDev || (!isDev && error instanceof FriendlyError)) {
-            alert(`ERROR: ${description}`)
+            alert(`Error with: ${descr}`)
         }
     },
 })
