@@ -13,9 +13,9 @@ export const synEventDef = createDef({
     },
 })
 
-export const useTiedEffect = tie({
-    descr: "using tied react effect",
-    spec: [funcDef],
-    onTry: eff => useEffect(eff, [eff]),
-    onCatch: () => {},
-})
+export const useTiedEffect = tie(
+    "using tied react effect",
+    [funcDef],
+    eff => useEffect(eff, [eff]),
+    () => {}
+)
